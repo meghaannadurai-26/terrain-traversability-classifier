@@ -2,6 +2,11 @@
 rugd_dataset/
 RUGD_frames-with-annotations/
 
+# ── Videos ────────────────────────────────────────────────────────────────────
+video_1.mp4
+video_2.mp4
+results/videos/
+
 # ── Temp / scratch ────────────────────────────────────────────────────────────
 tmp/
 
