@@ -1,0 +1,14 @@
+Terrain Traversability Classifier — Metrics
+==================================================
+Dataset Mode      : RUGD
+Total Images      : 13366
+Train / Val / Test: 9356 / 2004 / 2006
+Num Classes       : 10
+Model Params      : 1,309,930
+Best Val Accuracy : 99.75%
+Test Accuracy     : 99.55%
+Precision         : 99.40%
+Recall            : 99.55%
+F1 Score          : 99.48%
+Traversability Acc: 99.55%
+Training Time     : 78.5 min
