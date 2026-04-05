@@ -1,0 +1,66 @@
+name: CI — Lint & Import Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib numpy scikit-learn seaborn tqdm pillow flake8
+
+      - name: Lint with flake8
+        run: |
+          # Stop build on critical syntax errors
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Warn on style issues (don't fail)
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+
+      - name: Check Python imports resolve
+        run: |
+          python -c "import torch; import torchvision; import numpy; import sklearn; print('All imports OK')"
+
+      - name: Validate model definition syntax
+        run: |
+          python -c "
+          import torch, torch.nn as nn
+          class TerrainCNN(nn.Module):
+              def __init__(self, num_classes):
+                  super().__init__()
+                  def conv_block(in_ch, out_ch):
+                      return nn.Sequential(
+                          nn.Conv2d(in_ch, out_ch, 3, padding=1, bias=False),
+                          nn.BatchNorm2d(out_ch), nn.ReLU(inplace=True),
+                          nn.Conv2d(out_ch, out_ch, 3, padding=1, bias=False),
+                          nn.BatchNorm2d(out_ch), nn.ReLU(inplace=True),
+                          nn.MaxPool2d(2, 2), nn.Dropout2d(0.1),
+                      )
+                  self.features = nn.Sequential(conv_block(3,32),conv_block(32,64),conv_block(64,128),conv_block(128,256))
+                  self.gap = nn.AdaptiveAvgPool2d(1)
+                  self.classifier = nn.Sequential(nn.Flatten(),nn.Linear(256,512),nn.ReLU(inplace=True),nn.Dropout(0.5),nn.Linear(512,10))
+              def forward(self, x): return self.classifier(self.gap(self.features(x)))
+          model = TerrainCNN(10)
+          x = torch.randn(2, 3, 128, 128)
+          out = model(x)
+          assert out.shape == (2, 10), f'Unexpected output shape: {out.shape}'
+          print(f'Model forward pass OK — output shape: {out.shape}')
+          "

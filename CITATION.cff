@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Terrain Traversability Classifier for Autonomous Rovers"
+abstract: >
+  A custom CNN-based terrain classification pipeline trained on the RUGD dataset
+  that maps terrain types to traversability scores (Safe/Risky/Avoid) for 
+  autonomous rover navigation with ROS 2 Nav2 integration.
+authors:
+  - family-names: "Sabari"
+    given-names: ""
+repository-code: "https://github.com/sabari-1507/terrain-traversability-classifier"
+license: MIT
+date-released: "2026-04-05"
+keywords:
+  - terrain-classification
+  - traversability
+  - autonomous-rovers
+  - deep-learning
+  - pytorch
+  - cnn
+  - ros2
+  - nav2
+  - rugd
+  - computer-vision
+  - robotics
